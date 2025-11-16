@@ -93,12 +93,15 @@
   -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .calendar-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+.calendar-btn-text {
+  display: inline;
+}
 
+.calendar-btn-line {
+  display: inline;
+}
+
+@media (max-width: 768px) {
   .calendar-grid {
     gap: 4px;
     min-width: 600px;
@@ -120,8 +123,21 @@
 
   .calendar-nav-btn {
     padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-lg);
-    min-width: 40px;
+    font-size: var(--font-size-sm);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .calendar-btn-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-btn-line {
+    display: block;
+    line-height: 1.1;
   }
 
   .calendar-month-title {
@@ -136,14 +152,10 @@
 
 @media (max-width: 576px) {
   .calendar-nav-btn {
-    padding: var(--spacing-xs);
-    font-size: var(--font-size-xl);
-    min-width: 35px;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    text-align: center;
+    line-height: 1.2;
   }
 
   .calendar-month-title {

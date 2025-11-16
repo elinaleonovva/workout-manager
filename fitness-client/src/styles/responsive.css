@@ -128,9 +128,20 @@
     font-size: var(--font-size-sm);
   }
 
+  .table td:nth-child(3) {
+    white-space: normal !important;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
   @media (min-width: 768px) {
     .table.d-md-table {
       display: table !important;
+    }
+
+    .table td:nth-child(3) {
+      max-width: none;
     }
   }
   

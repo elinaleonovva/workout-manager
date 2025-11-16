@@ -141,8 +141,10 @@ const Calendar = () => {
               className="btn btn-outline-secondary calendar-nav-btn"
               onClick={() => navigateMonth(-1)}
             >
-              <span className="d-none d-sm-inline">Предыдущий месяц</span>
-              <span className="d-sm-none">←</span>
+              <span className="calendar-btn-text">
+                <span className="calendar-btn-line">Предыдущий</span>
+                <span className="calendar-btn-line">месяц</span>
+              </span>
             </button>
             <h2 className="mb-0 calendar-month-title">
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
@@ -151,8 +153,10 @@ const Calendar = () => {
               className="btn btn-outline-secondary calendar-nav-btn"
               onClick={() => navigateMonth(1)}
             >
-              <span className="d-none d-sm-inline">Следующий месяц</span>
-              <span className="d-sm-none">→</span>
+              <span className="calendar-btn-text">
+                <span className="calendar-btn-line">Следующий</span>
+                <span className="calendar-btn-line">месяц</span>
+              </span>
             </button>
           </div>
 
