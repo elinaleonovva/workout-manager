@@ -6,6 +6,8 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100, unique=True)
     muscle_group = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    equipment = models.CharField(max_length=200, blank=True, help_text="Требуемый инвентарь")
+    technique = models.TextField(blank=True, help_text="Техника выполнения")
 
     def __str__(self):
         return self.name

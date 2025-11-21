@@ -12,7 +12,8 @@ const ExerciseDetail = () => {
   const [exercise, setExercise] = useState(null);
   const [name, setName] = useState("");
   const [muscleGroup, setMuscleGroup] = useState("");
-  const [description, setDescription] = useState("");
+  const [equipment, setEquipment] = useState("");
+  const [technique, setTechnique] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,7 +24,8 @@ const ExerciseDetail = () => {
         setExercise(data);
         setName(data.name);
         setMuscleGroup(data.muscle_group);
-        setDescription(data.description);
+        setEquipment(data.equipment || "");
+        setTechnique(data.technique || "");
       } catch (err) {
         setError(err.message || "Не удалось загрузить упражнение");
       } finally {
@@ -36,11 +38,20 @@ const ExerciseDetail = () => {
 
   const handleSave = async () => {
     try {
-      await updateExercise(accessToken, id, { name, muscle_group: muscleGroup, description });
-      alert("Изменения сохранены!");
+      await updateExercise(accessToken, id, { 
+        name, 
+        muscle_group: muscleGroup, 
+        equipment,
+        technique
+      });
+      navigate("/");
     } catch (err) {
       setError(err.message || "Не удалось сохранить изменения");
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/");
   };
 
   const handleDelete = async () => {
@@ -96,16 +107,31 @@ const ExerciseDetail = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="description" className="form-label">
-                Описание:
+              <label htmlFor="equipment" className="form-label">
+                Инвентарь:
+              </label>
+              <input
+                id="equipment"
+                type="text"
+                className="form-control"
+                value={equipment}
+                onChange={(e) => setEquipment(e.target.value)}
+                disabled={!isAdmin}
+                placeholder="не требуется"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="technique" className="form-label">
+                Техника выполнения:
               </label>
               <textarea
-                id="description"
+                id="technique"
                 className="form-control"
-                rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                rows="5"
+                value={technique}
+                onChange={(e) => setTechnique(e.target.value)}
                 disabled={!isAdmin}
+                placeholder="Опишите технику выполнения упражнения"
               ></textarea>
             </div>
             <div className="d-flex justify-content-between" style={{ gap: 'var(--spacing-md)', flexWrap: 'wrap' }}>
@@ -117,6 +143,15 @@ const ExerciseDetail = () => {
                 style={{ flex: '1', minWidth: '150px' }}
               >
                 Сохранить изменения
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handleCancel}
+                disabled={!isAdmin}
+                style={{ flex: '1', minWidth: '150px' }}
+              >
+                Отменить изменения
               </button>
               <button
                 type="button"

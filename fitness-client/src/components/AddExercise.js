@@ -5,7 +5,8 @@ import { createExercise } from "../utils/api";
 const AddExercise = () => {
   const [name, setName] = useState("");
   const [muscleGroup, setMuscleGroup] = useState("");
-  const [description, setDescription] = useState("");
+  const [equipment, setEquipment] = useState("");
+  const [technique, setTechnique] = useState("");
   const [message, setMessage] = useState("");
   const { accessToken, isAdmin } = useAuth();
 
@@ -21,13 +22,15 @@ const AddExercise = () => {
       await createExercise(accessToken, {
         name,
         muscle_group: muscleGroup,
-        description,
+        equipment: equipment || "не требуется",
+        technique,
       });
 
       setMessage("Упражнение добавлено успешно!");
       setName("");
       setMuscleGroup("");
-      setDescription("");
+      setEquipment("");
+      setTechnique("");
     } catch (error) {
       console.error("Ошибка при добавлении упражнения:", error);
       setMessage("Ошибка при добавлении упражнения.");
@@ -79,16 +82,29 @@ const AddExercise = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="description" className="form-label">
-                Описание:
+              <label htmlFor="equipment" className="form-label">
+                Инвентарь:
+              </label>
+              <input
+                type="text"
+                id="equipment"
+                className="form-control"
+                placeholder="Введите требуемый инвентарь (например: гантели, скамья)"
+                value={equipment}
+                onChange={(e) => setEquipment(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="technique" className="form-label">
+                Техника выполнения:
               </label>
               <textarea
-                id="description"
+                id="technique"
                 className="form-control"
-                placeholder="Введите описание"
-                rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Опишите технику выполнения упражнения"
+                rows="5"
+                value={technique}
+                onChange={(e) => setTechnique(e.target.value)}
                 required
               ></textarea>
             </div>
