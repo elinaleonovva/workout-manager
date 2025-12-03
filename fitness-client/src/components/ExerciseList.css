@@ -19,6 +19,7 @@
   grid-template-columns: 1fr;
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-xxl);
+  grid-auto-flow: row;
 }
 
 /* Exercise Card */

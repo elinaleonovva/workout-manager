@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import api from "../api";
 import useAuth from "../hooks/useAuth";
 import Loader from "./Loader";
@@ -10,18 +10,48 @@ const ExerciseList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const { isAdmin } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
-    api.get("/exercises/")
-      .then((response) => {
-        setExercises(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+    // Загружаем данные только если мы на главной странице
+    if (location.pathname !== '/') {
+      return;
+    }
+
+    const loadExercises = async () => {
+      setLoading(true);
+      try {
+        // Добавляем timestamp для предотвращения кеширования
+        const response = await api.get("/exercises/", {
+          params: { _t: Date.now() }
+        });
+        // Сортируем упражнения по ID для сохранения стабильного порядка
+        // Убеждаемся, что ID - это числа
+        const sortedExercises = [...response.data].sort((a, b) => {
+          const idA = Number(a.id);
+          const idB = Number(b.id);
+          return idA - idB;
+        });
+        setExercises(sortedExercises);
+      } catch (error) {
         console.error("Ошибка при загрузке упражнений:", error);
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    loadExercises();
+  }, [location.pathname, location.key]); // Перезагружаем при изменении маршрута или ключа навигации
+
+  // Используем useMemo для стабильного порядка отображения
+  const sortedExercises = useMemo(() => {
+    if (!exercises || exercises.length === 0) return [];
+    return [...exercises].sort((a, b) => {
+      const idA = Number(a.id);
+      const idB = Number(b.id);
+      return idA - idB;
+    });
+  }, [exercises]);
 
   const handleCardClick = (exercise) => {
     setSelectedExercise(exercise);
@@ -51,9 +81,9 @@ const ExerciseList = () => {
         <h1 className="exercise-list-title">Список упражнений</h1>
         
         <div className="exercise-cards-grid">
-          {exercises.map((exercise) => (
+              {sortedExercises.map((exercise) => (
             <div
-              key={exercise.id}
+              key={`exercise-${exercise.id}`}
               className="exercise-card"
               onClick={() => handleCardClick(exercise)}
             >
@@ -68,20 +98,20 @@ const ExerciseList = () => {
                   >
                     ✎
                   </Link>
-                )}
+                    )}
               </div>
               <p className="exercise-card-muscle-group">
                 <span className="exercise-card-label">Группа мышц:</span> {exercise.muscle_group}
               </p>
             </div>
-          ))}
+              ))}
         </div>
 
         {isAdmin && (
           <div className="exercise-list-actions">
             <Link to="/add-exercise" className="btn btn-success">
-              + Добавить упражнение
-            </Link>
+                      + Добавить упражнение
+                    </Link>
           </div>
         )}
       </div>
