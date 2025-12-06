@@ -9,6 +9,9 @@ class Exercise(models.Model):
     equipment = models.CharField(max_length=200, blank=True, help_text="Требуемый инвентарь")
     technique = models.TextField(blank=True, help_text="Техника выполнения")
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return self.name
 

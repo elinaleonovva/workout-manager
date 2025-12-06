@@ -8,7 +8,7 @@ from api.serializers import ExerciseSerializer, WorkoutSerializer, WorkoutPlanSe
 
 
 class ExerciseViewSet(ModelViewSet):
-    queryset = Exercise.objects.all()
+    queryset = Exercise.objects.all().order_by('id')
     serializer_class = ExerciseSerializer
 
     def get_permissions(self):
@@ -36,9 +36,12 @@ class WorkoutPlanViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        # Каждый пользователь видит только свои активные планы
         return WorkoutPlan.objects.filter(user=self.request.user, is_active=True)
 
     def perform_create(self, serializer):
+        # Убеждаемся, что план создается для текущего пользователя
+        # Логика создания/обновления обрабатывается в сериализаторе
         serializer.save(user=self.request.user)
 
 

@@ -69,5 +69,22 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
         return [date.strftime('%Y-%m-%d') for date in obj.get_next_dates(400)]
 
     def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
+        # Убеждаемся, что план создается для текущего пользователя
+        user = self.context['request'].user
+        validated_data['user'] = user
+        
+        exercise = validated_data.get('exercise')
+        
+        # Проверяем, существует ли уже план для этого упражнения у этого пользователя
+        existing_plan = WorkoutPlan.objects.filter(user=user, exercise=exercise).first()
+        
+        if existing_plan:
+            # Если план существует, обновляем его вместо создания нового
+            existing_plan.start_date = validated_data.get('start_date', existing_plan.start_date)
+            existing_plan.frequency_days = validated_data.get('frequency_days', existing_plan.frequency_days)
+            existing_plan.is_active = validated_data.get('is_active', True)
+            existing_plan.save()
+            return existing_plan
+        
+        # Создаем новый план
         return super().create(validated_data)

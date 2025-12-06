@@ -23,7 +23,20 @@ class WorkoutAdmin(admin.ModelAdmin):
 class WorkoutPlanAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'exercise', 'start_date', 'frequency_days', 'is_active']
     search_fields = ['user__username', 'exercise__name']
-    list_filter = ['is_active', 'start_date', 'frequency_days']
+    list_filter = ['is_active', 'start_date', 'frequency_days', 'user']
+    
+    def get_queryset(self, request):
+        # Администратор видит только свои планы (если не суперпользователь)
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
+    
+    def save_model(self, request, obj, form, change):
+        # Убеждаемся, что план создается для текущего пользователя
+        if not change:  # Если это создание нового объекта
+            obj.user = request.user
+        super().save_model(request, obj, form, change)
 
 
 admin.site.register(Exercise, ExerciseAdmin)
